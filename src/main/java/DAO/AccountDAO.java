@@ -14,9 +14,9 @@ public class AccountDAO {
         try {
             String sql = "SELECT * FROM account WHERE account_id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            ResultSet rs = preparedStatement.executeQuery();
             preparedStatement.setInt(1, id);
-            while(rs.next()){
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()){
                 Account account = new Account(
                     rs.getInt("account_id"),
                     rs.getString("username"),
@@ -35,9 +35,9 @@ public class AccountDAO {
         try {
             String sql = "SELECT * FROM account WHERE username = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            ResultSet rs = preparedStatement.executeQuery();
             preparedStatement.setString(1, username);
-            while(rs.next()){
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()){
                 Account account = new Account(
                     rs.getInt("account_id"),
                     rs.getString("username"),
@@ -56,10 +56,10 @@ public class AccountDAO {
         try {
             String sql = "SELECT * FROM account WHERE username = ? AND password = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            ResultSet rs = preparedStatement.executeQuery();
             preparedStatement.setString(1, username);
             preparedStatement.setString(2, password);
-            while(rs.next()){
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()){
                 Account account = new Account(
                     rs.getInt("account_id"),
                     rs.getString("username"),
@@ -78,16 +78,16 @@ public class AccountDAO {
         try {
             String sql = "INSERT INTO account (username, password) VALUES (?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            ResultSet rs = preparedStatement.executeQuery();
             preparedStatement.setString(1, account.username);
             preparedStatement.setString(2, account.password);
-            while(rs.next()){
-                Account new_account = new Account(
-                    rs.getInt("account_id"),
-                    rs.getString("username"),
-                    rs.getString("password")
-                );
-                return new_account;
+            int updatedRows = preparedStatement.executeUpdate();
+            if (updatedRows > 0) {
+                ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    int id = generatedKeys.getInt(1);
+                    account.setAccount_id(id);
+                    return account;
+                }
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
