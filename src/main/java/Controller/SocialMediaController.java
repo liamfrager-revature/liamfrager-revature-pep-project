@@ -39,11 +39,11 @@ public class SocialMediaController {
         app.post("/login", this::Login);
         // MESSAGES
         app.get("/messages", this::getAllMessages);
-        app.get("/messages/:id", this::getMessageByID);
+        app.get("/messages/{id}", this::getMessageByID);
         app.post("/messages", this::postMessage);
-        app.patch("/messages/:id", this::patchMessageByID);
-        app.delete("/messages/:id", this::deleteMessageByID);
-        app.get("/accounts/:account_id/messages", this::getAllMessagesByAccountID);
+        app.patch("/messages/{id}", this::patchMessageByID);
+        app.delete("/messages/{id}", this::deleteMessageByID);
+        app.get("/accounts/{account_id}/messages", this::getAllMessagesByAccountID);
         
 
         return app;
