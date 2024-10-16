@@ -1,5 +1,12 @@
 package Controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import Model.Account;
+import Model.Message;
+import Service.AccountService;
+import Service.MessageService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -9,6 +16,16 @@ import io.javalin.http.Context;
  * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
  */
 public class SocialMediaController {
+    MessageService messageService;
+    AccountService accountService;
+    ObjectMapper om;
+
+    public SocialMediaController(){
+        this.messageService = new MessageService();
+        this.accountService = new AccountService();
+        this.om = new ObjectMapper();
+    }
+
     /**
      * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
      * suite must receive a Javalin object from this method.
@@ -17,57 +34,106 @@ public class SocialMediaController {
     public Javalin startAPI() {
         Javalin app = Javalin.create();
         // REGISTER
-        app.get("/register", this::getRegister);
-        app.post("/register", this::postRegister);
+        app.post("/register", this::Register);
         // LOGIN
-        app.get("/login", this::getLogin);
-        app.post("/login", this::postLogin);
+        app.post("/login", this::Login);
         // MESSAGES
         app.get("/messages", this::getAllMessages);
         app.get("/messages/:id", this::getMessageByID);
         app.post("/messages", this::postMessage);
         app.patch("/messages/:id", this::patchMessageByID);
         app.delete("/messages/:id", this::deleteMessageByID);
-        app.get("/accounts/:account_id/messages.", this::getAllMessagesByUser);
+        app.get("/accounts/:account_id/messages", this::getAllMessagesByAccountID);
         
 
         return app;
     }
 
     /**
-     * This is an example handler for an example endpoint.
+     * Handler for the '/register' POST endpoint.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
      */
-    private void getRegister(Context context) {
-        context.json("getRegister");
+    private void Register(Context context) {
+        try {
+            Account account = om.readValue(context.body(), Account.class);
+            context.status(200).json(accountService.Register(account));
+        } catch (Exception e) {
+            context.status(400);
+        }
     }
-    private void postRegister(Context context) {
-        context.json("postRegister");
+
+    /**
+     * Handler for the '/login' POST endpoint.
+     * @param context The Javalin Context object manages information about both the HTTP request and response.
+     */
+    private void Login(Context context) {
+        try {
+            Account account = om.readValue(context.body(), Account.class);
+            context.status(200).json(accountService.Login(account));
+        } catch (Exception e) {
+            context.status(401);
+        }
     }
-    private void getLogin(Context context) {
-        context.json("getLogin");
-    }
-    private void postLogin(Context context) {
-        context.json("postLogin");
-    }
-    private void getAllMessages(Context context) {
-        context.json("getAllMessages");
-    }
-    private void getMessageByID(Context context) {
-        context.json("getMessageByID");
-    }
+
+    /**
+     * Handler for the '/messages' POST endpoint.
+     * @param context The Javalin Context object manages information about both the HTTP request and response.
+     */
     private void postMessage(Context context) {
-        context.json("postMessage");
+        try {
+            Message message = om.readValue(context.body(), Message.class);
+            context.status(200).json(messageService.postMessage(message));
+        } catch (Exception e) {
+            context.status(400);
+        }
     }
-    private void patchMessageByID(Context context) {
-        context.json("patchMessageByID");
+
+    /**
+     * Handler for the '/messages' GET endpoint.
+     * @param context The Javalin Context object manages information about both the HTTP request and response.
+     */
+    private void getAllMessages(Context context) {
+        context.status(200).json(messageService.getAllMessages());
     }
+
+    /**
+     * Handler for the '/messages/:id' GET endpoint.
+     * @param context The Javalin Context object manages information about both the HTTP request and response.
+     */
+    private void getMessageByID(Context context) {
+        int id = Integer.parseInt(context.pathParam("id"));
+        context.status(200).json(messageService.getMessageByID(id));
+    }
+
+    /**
+     * Handler for the '/messages/:id' DELETE endpoint.
+     * @param context The Javalin Context object manages information about both the HTTP request and response.
+     */
     private void deleteMessageByID(Context context) {
-        context.json("deleteMessageByID");
-    }
-    private void getAllMessagesByUser(Context context) {
-        context.json("getAllMessagesByUser");
+        int id = Integer.parseInt(context.pathParam("id"));
+        context.status(200).json(messageService.deleteMessageByID(id));
     }
 
+    /**
+     * Handler for the '/messages/:id' PATCH endpoint.
+     * @param context The Javalin Context object manages information about both the HTTP request and response.
+     */
+    private void patchMessageByID(Context context) {
+        try {
+            int id = Integer.parseInt(context.pathParam("id"));
+            Message message = om.readValue(context.body(), Message.class);
+            context.status(200).json(messageService.patchMessageByID(id, message));
+        } catch (Exception e) {
+            context.status(400);
+        }
+    }
 
+    /**
+     * Handler for the '/accounts/:account_id/messages' GET endpoint.
+     * @param context The Javalin Context object manages information about both the HTTP request and response.
+     */
+    private void getAllMessagesByAccountID(Context context) {
+        int id = Integer.parseInt(context.pathParam("id"));
+        context.status(200).json(messageService.getAllMessagesByAccountID(id));
+    }
 }

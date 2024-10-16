@@ -1,10 +1,12 @@
 package Service;
 
+import Model.Account;
+
 public class AccountService {
-    public void Register() {
-
+    public Account Register(Account account) {
+        return account;
     }
-    public void Login() {
-
+    public Account Login(Account account) {
+        return account;
     }
 }

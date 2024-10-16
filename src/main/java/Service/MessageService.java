@@ -12,14 +12,14 @@ public class MessageService {
     public Message getMessageByID(int id) {
         return new Message();
     }
-    public boolean postMessage(Message message) {
-        return true;
+    public Message postMessage(Message message) {
+        return message;
     }
     public boolean patchMessageByID(int id, Message message) {
         return true;
     }
-    public boolean deleteMessageByID(int id) {
-        return true;
+    public Message deleteMessageByID(int id) {
+        return new Message();
     }
     public List<Message> getAllMessagesByAccountID(int id) {
         return new ArrayList<Message>();
