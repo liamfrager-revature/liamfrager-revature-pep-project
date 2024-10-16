@@ -16,7 +16,20 @@ public class SocialMediaController {
      */
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        app.get("example-endpoint", this::exampleHandler);
+        // REGISTER
+        app.get("/register", this::getRegister);
+        app.post("/register", this::postRegister);
+        // LOGIN
+        app.get("/login", this::getLogin);
+        app.post("/login", this::postLogin);
+        // MESSAGES
+        app.get("/messages", this::getAllMessages);
+        app.get("/messages/:id", this::getMessageByID);
+        app.post("/messages", this::postMessage);
+        app.patch("/messages/:id", this::patchMessageByID);
+        app.delete("/messages/:id", this::deleteMessageByID);
+        app.get("/accounts/:account_id/messages.", this::getAllMessagesByUser);
+        
 
         return app;
     }
@@ -25,8 +38,35 @@ public class SocialMediaController {
      * This is an example handler for an example endpoint.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
      */
-    private void exampleHandler(Context context) {
-        context.json("sample text");
+    private void getRegister(Context context) {
+        context.json("getRegister");
+    }
+    private void postRegister(Context context) {
+        context.json("postRegister");
+    }
+    private void getLogin(Context context) {
+        context.json("getLogin");
+    }
+    private void postLogin(Context context) {
+        context.json("postLogin");
+    }
+    private void getAllMessages(Context context) {
+        context.json("getAllMessages");
+    }
+    private void getMessageByID(Context context) {
+        context.json("getMessageByID");
+    }
+    private void postMessage(Context context) {
+        context.json("postMessage");
+    }
+    private void patchMessageByID(Context context) {
+        context.json("patchMessageByID");
+    }
+    private void deleteMessageByID(Context context) {
+        context.json("deleteMessageByID");
+    }
+    private void getAllMessagesByUser(Context context) {
+        context.json("getAllMessagesByUser");
     }
 
 
