@@ -82,12 +82,7 @@ public class AccountDAO {
             preparedStatement.setString(2, account.password);
             int updatedRows = preparedStatement.executeUpdate();
             if (updatedRows > 0) {
-                ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    int id = generatedKeys.getInt(1);
-                    account.setAccount_id(id);
-                    return account;
-                }
+                return this.getAccountByUsername(account.username);
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());

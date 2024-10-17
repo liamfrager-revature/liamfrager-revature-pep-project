@@ -36,11 +36,14 @@ public class MessageService {
      * @return The new message.
      * @throws Exception The message is invalid.
      */
-    public Message postMessage(Message message) throws Exception {
+    public Message postMessage(Message message) throws InvalidMessageTextException, InvalidUserIDException {
         // If the message_text is not blank, is under 255 characters, and posted_by refers to a real, existing user.
-        if (message.message_text.length() > 0 && message.message_text.length() < 255 && accountService.userExists(message.posted_by))
-            return messageDAO.insertMessage(message);
-        throw new Exception();
+        if (message.message_text.length() <= 0 || message.message_text.length() >= 255)
+            throw new InvalidMessageTextException();
+        if (!accountService.userExists(message.posted_by))
+            throw new InvalidUserIDException(message.posted_by);
+        return messageDAO.insertMessage(message);
+        
     }
     
     /**
@@ -50,11 +53,13 @@ public class MessageService {
      * @return The updated message.
      * @throws Exception The new message is invalid.
      */
-    public Message patchMessageByID(int id, Message new_message) throws Exception {
+    public Message patchMessageByID(int id, Message new_message) throws InvalidMessageTextException, InvalidMessageIDException {
         // If the message id already exists and the new message_text is not blank and is not over 255 characters
-        if (messageExists(id) && new_message.message_text.length() > 0 && new_message.message_text.length() < 255)
-            return messageDAO.updateMessageByID(id, new_message);
-        throw new Exception();
+        if (new_message.message_text.length() <= 0 || new_message.message_text.length() >= 255)
+            throw new InvalidMessageTextException();
+        if (!messageExists(id))
+            throw new InvalidMessageIDException();
+        return messageDAO.updateMessageByID(id, new_message);
     }
     
     /**
@@ -76,7 +81,6 @@ public class MessageService {
     public List<Message> getAllMessagesByAccountID(int id) {
         return messageDAO.getAllMessagesByAccountID(id);
     }
-
     
     /**
      * @param id The ID of the message to check.
@@ -84,5 +88,31 @@ public class MessageService {
      */
     public boolean messageExists(int id) {
         return messageDAO.getMessageByID(id) != null;
+    }
+
+    // EXCEPTIONS
+    public class InvalidMessageTextException extends Exception {
+        public InvalidMessageTextException() {
+            super();
+        }
+        public InvalidMessageTextException(String message) {
+            super(message);
+        }
+    }
+    public class InvalidMessageIDException extends Exception {
+        public InvalidMessageIDException() {
+            super();
+        }
+        public InvalidMessageIDException(String message) {
+            super(message);
+        }
+    }
+    public class InvalidUserIDException extends Exception {
+        public InvalidUserIDException() {
+            super("A user with that id does not exist.");
+        }
+        public InvalidUserIDException(int id) {
+            super("A user with id '" + id + "' does not exist.");
+        }
     }
 }

@@ -15,11 +15,15 @@ public class AccountService {
      * @param account The account of the user to register.
      * @return The account of the registered user.
      */
-    public Account Register(Account account) throws Exception {
+    public Account Register(Account account) throws InvalidUsernameException, InvalidPasswordException, UserAlreadyExistsException {
         // If the username is not blank, the password is at least 4 characters long, and an Account with that username does not already exist.
-        if (account.username.length() > 0 && account.password.length() >= 4 && userExists(account.username))
-            return accountDAO.createAccount(account);
-        throw new Exception();
+        if (account.username.length() <= 0)
+            throw new InvalidUsernameException();
+        if (account.password.length() < 4)
+            throw new InvalidPasswordException();
+        if (userExists(account.username))
+            throw new UserAlreadyExistsException();
+        return accountDAO.createAccount(account);
     }
 
     /**
@@ -27,12 +31,12 @@ public class AccountService {
      * @param account The account of the user to login.
      * @return The account of the logged in user.
      */
-    public Account Login(Account account) throws Exception {
+    public Account Login(Account account) throws InvalidLoginException {
         // If the username and password provided in the request body JSON match a real account existing on the database.
         Account validAccount = accountDAO.getAccountByUsernameAndPassword(account.username, account.password);
-        if (validAccount != null)
-            return account;
-        throw new Exception();
+        if (validAccount == null)
+            throw new InvalidLoginException();
+        return validAccount;
     }
 
     /**
@@ -49,5 +53,27 @@ public class AccountService {
      */
     public boolean userExists(String username) {
         return accountDAO.getAccountByUsername(username) != null;
+    }
+
+    // EXCEPTIONS
+    public class InvalidUsernameException extends Exception {
+        public InvalidUsernameException() {
+            super();
+        }
+    }
+    public class InvalidPasswordException extends Exception {
+        public InvalidPasswordException() {
+            super();
+        }
+    }
+    public class InvalidLoginException extends Exception {
+        public InvalidLoginException() {
+            super();
+        }
+    }
+    public class UserAlreadyExistsException extends Exception {
+        public UserAlreadyExistsException() {
+            super();
+        }
     }
 }

@@ -64,8 +64,8 @@ public class MessageDAO {
             if (updatedRows > 0) {
                 ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
                 if (generatedKeys.next()) {
-                    int messsage_id = generatedKeys.getInt(1);
-                    message.message_id = messsage_id;
+                    int messsageID = generatedKeys.getInt(1);
+                    message.message_id = messsageID;
                     return message;
                 }
             }
@@ -85,9 +85,8 @@ public class MessageDAO {
             if (updatedRows > 0) {
                 ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
                 if (generatedKeys.next()) {
-                    int message_id = generatedKeys.getInt(1);
-                    message.message_id = message_id;
-                    return message;
+                    int messageID = generatedKeys.getInt(1);
+                    return this.getMessageByID(messageID);
                 }
             }
         } catch (SQLException e) {
@@ -132,6 +131,6 @@ public class MessageDAO {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return new ArrayList<Message>();
+        return null;
     }
 }

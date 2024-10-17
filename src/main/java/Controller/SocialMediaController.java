@@ -1,11 +1,14 @@
 package Controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import Model.Account;
 import Model.Message;
 import Service.AccountService;
+import Service.AccountService.*;
 import Service.MessageService;
+import Service.MessageService.*;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -56,8 +59,11 @@ public class SocialMediaController {
         try {
             Account account = om.readValue(context.body(), Account.class);
             context.status(200).json(accountService.Register(account));
-        } catch (Exception e) {
+        } catch (InvalidUsernameException | InvalidPasswordException | UserAlreadyExistsException e) {
             context.status(400);
+        } catch (JsonProcessingException e) {
+            System.out.println("Could not parse request body.");
+            e.printStackTrace();
         }
     }
 
@@ -69,8 +75,11 @@ public class SocialMediaController {
         try {
             Account account = om.readValue(context.body(), Account.class);
             context.status(200).json(accountService.Login(account));
-        } catch (Exception e) {
+        } catch (InvalidLoginException e) {
             context.status(401);
+        } catch (JsonProcessingException e) {
+            System.out.println("Could not parse request body.");
+            e.printStackTrace();
         }
     }
 
@@ -82,8 +91,11 @@ public class SocialMediaController {
         try {
             Message message = om.readValue(context.body(), Message.class);
             context.status(200).json(messageService.postMessage(message));
-        } catch (Exception e) {
+        } catch (InvalidMessageTextException | InvalidUserIDException e) {
             context.status(400);
+        } catch (JsonProcessingException e) {
+            System.out.println("Could not parse request body.");
+            e.printStackTrace();
         }
     }
 
@@ -101,7 +113,11 @@ public class SocialMediaController {
      */
     private void getMessageByID(Context context) {
         int id = Integer.parseInt(context.pathParam("id"));
-        context.status(200).json(messageService.getMessageByID(id));
+        Message message = messageService.getMessageByID(id);
+        if (message == null)
+            context.status(200);
+        else
+            context.status(200).json(message);
     }
 
     /**
@@ -110,7 +126,11 @@ public class SocialMediaController {
      */
     private void deleteMessageByID(Context context) {
         int id = Integer.parseInt(context.pathParam("id"));
-        context.status(200).json(messageService.deleteMessageByID(id));
+        Message deletedMessage = messageService.deleteMessageByID(id);
+        if (deletedMessage == null)
+            context.status(200);
+        else
+            context.status(200).json(deletedMessage);
     }
 
     /**
@@ -122,8 +142,11 @@ public class SocialMediaController {
             int id = Integer.parseInt(context.pathParam("id"));
             Message message = om.readValue(context.body(), Message.class);
             context.status(200).json(messageService.patchMessageByID(id, message));
-        } catch (Exception e) {
+        } catch (InvalidMessageTextException | InvalidMessageIDException e) {
             context.status(400);
+        } catch (JsonProcessingException e) {
+            System.out.println("Could not parse request body.");
+            e.printStackTrace();
         }
     }
 
@@ -132,7 +155,7 @@ public class SocialMediaController {
      * @param context The Javalin Context object manages information about both the HTTP request and response.
      */
     private void getAllMessagesByAccountID(Context context) {
-        int id = Integer.parseInt(context.pathParam("id"));
+        int id = Integer.parseInt(context.pathParam("account_id"));
         context.status(200).json(messageService.getAllMessagesByAccountID(id));
     }
 }
