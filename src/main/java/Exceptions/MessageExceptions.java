@@ -7,7 +7,7 @@ public class MessageExceptions {
      */
     public static class InvalidMessageTextException extends Exception {
         public InvalidMessageTextException() {
-            super();
+            super("The message text is either empty or longer than 255 characters.");
         }
         public InvalidMessageTextException(String message) {
             super(message);
@@ -19,7 +19,7 @@ public class MessageExceptions {
      */
     public static class InvalidMessageIDException extends Exception {
         public InvalidMessageIDException() {
-            super();
+            super("A message with that ID does not exist.");
         }
         public InvalidMessageIDException(String message) {
             super(message);
@@ -31,11 +31,10 @@ public class MessageExceptions {
      */
     public static class InvalidUserIDException extends Exception {
         public InvalidUserIDException() {
-            super("A user with that id does not exist.");
+            super("A user with that ID does not exist.");
         }
         public InvalidUserIDException(int id) {
-            super("A user with id '" + id + "' does not exist.");
+            super("A user with ID '" + id + "' does not exist.");
         }
     }
-    
 }

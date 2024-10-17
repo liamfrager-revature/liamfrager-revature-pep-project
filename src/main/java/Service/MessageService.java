@@ -28,7 +28,7 @@ public class MessageService {
     /**
      * Get a message with a given ID.
      * @param id The ID of the message to be returned.
-     * @return The message with the given ID.
+     * @return The message with the given <code>id</code>.
      */
     public Message getMessageByID(int id) {
         return messageDAO.getMessageByID(id);
@@ -38,10 +38,10 @@ public class MessageService {
      * Add a new message to the database if the message is valid.
      * @param message The message to be added.
      * @return The new message.
-     * @throws Exception The message is invalid.
+     * @throws InvalidMessageTextException <code>message.message_text</code> is either empty or longer than 255 characters.
+     * @throws InvalidUserIDException There is no user with the given <code>message.posted_by</code> ID.
      */
     public Message postMessage(Message message) throws InvalidMessageTextException, InvalidUserIDException {
-        // If the message_text is not blank, is under 255 characters, and posted_by refers to a real, existing user.
         if (message.message_text.length() <= 0 || message.message_text.length() >= 255)
             throw new InvalidMessageTextException();
         if (!accountService.userExists(message.posted_by))
@@ -55,10 +55,10 @@ public class MessageService {
      * @param id The ID of the message to update.
      * @param new_message The new message that will replace the old message.
      * @return The updated message.
-     * @throws Exception The new message is invalid.
+     * @throws InvalidMessageTextException <code>new_message.message_text</code> is either empty or longer than 255 characters.
+     * @throws InvalidMessageIDException There is no message with the given <code>id</code>.
      */
     public Message patchMessageByID(int id, Message new_message) throws InvalidMessageTextException, InvalidMessageIDException {
-        // If the message id already exists and the new message_text is not blank and is not over 255 characters
         if (new_message.message_text.length() <= 0 || new_message.message_text.length() >= 255)
             throw new InvalidMessageTextException();
         if (!messageExists(id))
@@ -80,7 +80,7 @@ public class MessageService {
     /**
      * Get all messages posted by a user with the given ID.
      * @param id The ID of the user whose messages will be returned. Returns null if the ID is invalid
-     * @return A list of all messages by the user with the given ID.
+     * @return A list of all messages by the user with the given <code>id</code>.
      */
     public List<Message> getAllMessagesByAccountID(int id) {
         return messageDAO.getAllMessagesByAccountID(id);
@@ -88,7 +88,7 @@ public class MessageService {
     
     /**
      * @param id The ID of the message to check.
-     * @return A boolean indicating whether a message exists with the given ID.
+     * @return A boolean indicating whether a message exists with the given <code>id</code>.
      */
     public boolean messageExists(int id) {
         return messageDAO.getMessageByID(id) != null;

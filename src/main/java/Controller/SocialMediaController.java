@@ -2,25 +2,27 @@ package Controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import Model.Account;
-import Model.Message;
-import Service.AccountService;
-import Exceptions.AccountExceptions.*;
-import Service.MessageService;
-import Exceptions.MessageExceptions.*;
+
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
-/**
- * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
- * found in readme.md as well as the test cases. You should
- * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
- */
+import Model.Account;
+import Model.Message;
+
+import Service.AccountService;
+import Service.MessageService;
+
+import Exceptions.AccountExceptions.*;
+import Exceptions.MessageExceptions.*;
+
 public class SocialMediaController {
     MessageService messageService;
     AccountService accountService;
     ObjectMapper om;
 
+    /**
+     * Constructor for the social media controller.
+     */
     public SocialMediaController(){
         this.messageService = new MessageService();
         this.accountService = new AccountService();
@@ -28,17 +30,14 @@ public class SocialMediaController {
     }
 
     /**
-     * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
-     * suite must receive a Javalin object from this method.
-     * @return a Javalin app object which defines the behavior of the Javalin controller.
+     * Initializes the API and exposes its routes.
+     * @return A Javalin app object which defines the behavior of the Javalin controller.
      */
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        // REGISTER
-        app.post("/register", this::Register);
-        // LOGIN
-        app.post("/login", this::Login);
-        // MESSAGES
+
+        app.post("/register", this::register);
+        app.post("/login", this::login);
         app.get("/messages", this::getAllMessages);
         app.get("/messages/{id}", this::getMessageByID);
         app.post("/messages", this::postMessage);
@@ -46,15 +45,14 @@ public class SocialMediaController {
         app.delete("/messages/{id}", this::deleteMessageByID);
         app.get("/accounts/{account_id}/messages", this::getAllMessagesByAccountID);
         
-
         return app;
     }
 
     /**
-     * Handler for the '/register' POST endpoint.
+     * Handler for the <code>/register</code> <code>POST</code> endpoint.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
      */
-    private void Register(Context context) {
+    private void register(Context context) {
         try {
             Account account = om.readValue(context.body(), Account.class);
             context.status(200).json(accountService.register(account));
@@ -67,10 +65,10 @@ public class SocialMediaController {
     }
 
     /**
-     * Handler for the '/login' POST endpoint.
+     * Handler for the <code>/login</code> <code>POST</code> endpoint.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
      */
-    private void Login(Context context) {
+    private void login(Context context) {
         try {
             Account account = om.readValue(context.body(), Account.class);
             context.status(200).json(accountService.login(account));
@@ -83,7 +81,7 @@ public class SocialMediaController {
     }
 
     /**
-     * Handler for the '/messages' POST endpoint.
+     * Handler for the <code>/messages</code> <code>POST</code> endpoint.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
      */
     private void postMessage(Context context) {
@@ -99,7 +97,7 @@ public class SocialMediaController {
     }
 
     /**
-     * Handler for the '/messages' GET endpoint.
+     * Handler for the <code>/messages</code> <code>GET</code> endpoint.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
      */
     private void getAllMessages(Context context) {
@@ -107,7 +105,7 @@ public class SocialMediaController {
     }
 
     /**
-     * Handler for the '/messages/:id' GET endpoint.
+     * Handler for the <code>/messages/{id}</code> <code>GET</code> endpoint.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
      */
     private void getMessageByID(Context context) {
@@ -120,7 +118,7 @@ public class SocialMediaController {
     }
 
     /**
-     * Handler for the '/messages/:id' DELETE endpoint.
+     * Handler for the <code>/messages/{id}</code> <code>DELETE</code> endpoint.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
      */
     private void deleteMessageByID(Context context) {
@@ -133,7 +131,7 @@ public class SocialMediaController {
     }
 
     /**
-     * Handler for the '/messages/:id' PATCH endpoint.
+     * Handler for the <code>/messages/{id}</code> <code>PATCH</code> endpoint.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
      */
     private void patchMessageByID(Context context) {
@@ -150,7 +148,7 @@ public class SocialMediaController {
     }
 
     /**
-     * Handler for the '/accounts/:account_id/messages' GET endpoint.
+     * Handler for the <code>/accounts/{account_id}/messages</code> <code>GET</code> endpoint.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
      */
     private void getAllMessagesByAccountID(Context context) {

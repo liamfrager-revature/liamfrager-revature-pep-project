@@ -7,7 +7,7 @@ public class AccountExceptions {
      */
     public static class InvalidUsernameException extends Exception {
         public InvalidUsernameException() {
-            super();
+            super("The given username is invalid.");
         }
     }
 
@@ -16,7 +16,7 @@ public class AccountExceptions {
      */
     public static class InvalidPasswordException extends Exception {
         public InvalidPasswordException() {
-            super();
+            super("The given password is too short.");
         }
     }
 
@@ -25,7 +25,7 @@ public class AccountExceptions {
      */
     public static class InvalidLoginException extends Exception {
         public InvalidLoginException() {
-            super();
+            super("Could not find a user with that username and password.");
         }
     }
 
@@ -34,8 +34,7 @@ public class AccountExceptions {
      */
     public static class UserAlreadyExistsException extends Exception {
         public UserAlreadyExistsException() {
-            super();
+            super("A user with that username already exists.");
         }
     }
-    
 }
