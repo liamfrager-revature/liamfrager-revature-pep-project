@@ -2,13 +2,12 @@ package Controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import Model.Account;
 import Model.Message;
 import Service.AccountService;
-import Service.AccountService.*;
+import Exceptions.AccountExceptions.*;
 import Service.MessageService;
-import Service.MessageService.*;
+import Exceptions.MessageExceptions.*;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -58,7 +57,7 @@ public class SocialMediaController {
     private void Register(Context context) {
         try {
             Account account = om.readValue(context.body(), Account.class);
-            context.status(200).json(accountService.Register(account));
+            context.status(200).json(accountService.register(account));
         } catch (InvalidUsernameException | InvalidPasswordException | UserAlreadyExistsException e) {
             context.status(400);
         } catch (JsonProcessingException e) {
@@ -74,7 +73,7 @@ public class SocialMediaController {
     private void Login(Context context) {
         try {
             Account account = om.readValue(context.body(), Account.class);
-            context.status(200).json(accountService.Login(account));
+            context.status(200).json(accountService.login(account));
         } catch (InvalidLoginException e) {
             context.status(401);
         } catch (JsonProcessingException e) {

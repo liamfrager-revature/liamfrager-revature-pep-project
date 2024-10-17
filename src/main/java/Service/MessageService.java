@@ -1,14 +1,18 @@
 package Service;
-import java.util.List;
 
+import java.util.List;
 import DAO.MessageDAO;
 import Model.Message;
+import Exceptions.MessageExceptions.*;
 
 public class MessageService {
     public MessageDAO messageDAO;
     public AccountService accountService;
 
-    public MessageService(){
+    /**
+     * Constructor for the message service.
+     */
+    public MessageService() {
         messageDAO = new MessageDAO();
         accountService = new AccountService();
     }
@@ -88,31 +92,5 @@ public class MessageService {
      */
     public boolean messageExists(int id) {
         return messageDAO.getMessageByID(id) != null;
-    }
-
-    // EXCEPTIONS
-    public class InvalidMessageTextException extends Exception {
-        public InvalidMessageTextException() {
-            super();
-        }
-        public InvalidMessageTextException(String message) {
-            super(message);
-        }
-    }
-    public class InvalidMessageIDException extends Exception {
-        public InvalidMessageIDException() {
-            super();
-        }
-        public InvalidMessageIDException(String message) {
-            super(message);
-        }
-    }
-    public class InvalidUserIDException extends Exception {
-        public InvalidUserIDException() {
-            super("A user with that id does not exist.");
-        }
-        public InvalidUserIDException(int id) {
-            super("A user with id '" + id + "' does not exist.");
-        }
     }
 }
